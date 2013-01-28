@@ -1,4 +1,4 @@
-package com.jmcristobal;
+package com.jmcristobal.sipphone;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,9 +22,6 @@ import android.widget.TextView;
 import com.csipsimple.api.SipConfigManager;
 import com.csipsimple.api.SipManager;
 import com.csipsimple.api.SipProfile;
-import com.sample.csipsimple.R;
-import com.sample.csipsimple.R.id;
-import com.sample.csipsimple.R.layout;
 
 public class Main extends Activity implements OnClickListener {
     private static final String THIS_FILE = "SampleCSipSimpleAppActivity";
