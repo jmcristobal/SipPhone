@@ -26,6 +26,8 @@ import com.csipsimple.api.SipProfile;
 import com.jmcristobal.sipphone.R;
 
 public class Main extends Activity implements OnClickListener {
+	private static final String STUN_SERVER = "stun.counterpath.com";
+
 	private static final String TAG = "MainActivity";
 
 	private static final String SAMPLE_ALREADY_SETUP = "sample_already_setup";
@@ -36,23 +38,19 @@ public class Main extends Activity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		initilizeGui();
+		configureSipStackPreferences();
+	}
+
+	private void initilizeGui() {
 		setContentView(R.layout.main);
-
-		// Retrieve private preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean alreadySetup = prefs.getBoolean(SAMPLE_ALREADY_SETUP, false);
-		if (!alreadySetup) {
-			// Activate debugging .. here can come various other options
-			// One can also decide to reuse csipsimple activities to setup config
-			SipConfigManager.setPreferenceStringValue(this, SipConfigManager.LOG_LEVEL, "5");
-			SipConfigManager.setPreferenceBooleanValue(this, SipConfigManager.LOG_USE_DIRECT_FILE, false);
-			SipConfigManager.setPreferenceBooleanValue(this, SipConfigManager.ICON_IN_STATUS_BAR, true);
-		}
-
 		// Bind view buttons
 		((Button) findViewById(R.id.start_btn)).setOnClickListener(this);
 		((Button) findViewById(R.id.save_acc_btn)).setOnClickListener(this);
+		initializeAccountFromStoredSettings();
+	}
 
+	private void initializeAccountFromStoredSettings() {
 		// Get current account if any
 		Cursor c = getContentResolver().query(SipProfile.ACCOUNT_URI,
 				new String[] { SipProfile.FIELD_ID, SipProfile.FIELD_ACC_ID, SipProfile.FIELD_REG_URI }, null, null,
@@ -70,7 +68,18 @@ public class Main extends Activity implements OnClickListener {
 			} finally {
 				c.close();
 			}
+		}
+	}
 
+	private void configureSipStackPreferences() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean alreadySetup = prefs.getBoolean(SAMPLE_ALREADY_SETUP, false);
+		if (!alreadySetup) {
+			SipConfigManager.setPreferenceStringValue(this, SipConfigManager.LOG_LEVEL, "4");
+			SipConfigManager.setPreferenceBooleanValue(this, SipConfigManager.LOG_USE_DIRECT_FILE, false);
+			SipConfigManager.setPreferenceBooleanValue(this, SipConfigManager.ICON_IN_STATUS_BAR, true);
+			SipConfigManager.setPreferenceBooleanValue(this, SipConfigManager.ENABLE_STUN, true);
+			SipConfigManager.setPreferenceStringValue(this, SipConfigManager.STUN_SERVER, STUN_SERVER);
 		}
 	}
 
@@ -78,19 +87,27 @@ public class Main extends Activity implements OnClickListener {
 	public void onClick(View clickedView) {
 		int clickedId = clickedView.getId();
 		if (clickedId == R.id.start_btn) {
-			Intent it = new Intent(SipManager.INTENT_SIP_SERVICE);
-			it.putExtra(SipManager.EXTRA_OUTGOING_ACTIVITY, new ComponentName(Main.this, Main.class));
-			startService(it);
+			startSipStack();
 		} else if (clickedId == R.id.save_acc_btn) {
-			String pwd = ((EditText) findViewById(R.id.field_password)).getText().toString();
-			String fullUser = ((EditText) findViewById(R.id.field_user)).getText().toString();
-			String[] splitUser = fullUser.split("@");
-			String error = getValidAccountFieldsError(fullUser, pwd, splitUser);
-			if (TextUtils.isEmpty(error)) {
-				saveAccountSettings(pwd, fullUser, splitUser);
-			} else {
-				showAlertMessage(getResources().getString(R.string.invalid_settings), error);
-			}
+			saveAccount();
+		}
+	}
+
+	private void startSipStack() {
+		Intent it = new Intent(SipManager.INTENT_SIP_SERVICE);
+		it.putExtra(SipManager.EXTRA_OUTGOING_ACTIVITY, new ComponentName(Main.this, Main.class));
+		startService(it);
+	}
+
+	private void saveAccount() {
+		String pwd = ((EditText) findViewById(R.id.field_password)).getText().toString();
+		String fullUser = ((EditText) findViewById(R.id.field_user)).getText().toString();
+		String[] splitUser = fullUser.split("@");
+		String error = getValidAccountFieldsError(fullUser, pwd, splitUser);
+		if (TextUtils.isEmpty(error)) {
+			saveAccountSettingsInDatabase(pwd, fullUser, splitUser);
+		} else {
+			showAlertMessage(getResources().getString(R.string.invalid_settings), error);
 		}
 	}
 
@@ -107,19 +124,7 @@ public class Main extends Activity implements OnClickListener {
 		return "";
 	}
 
-	private void showAlertMessage(String title, String error) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(error).setTitle(title).setCancelable(false)
-				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-					}
-				});
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
-
-	private void saveAccountSettings(String pwd, String fullUser, String[] splitUser) {
+	private void saveAccountSettingsInDatabase(String pwd, String fullUser, String[] splitUser) {
 		SipProfile builtProfile = buildSipProfile(pwd, fullUser, splitUser);
 		ContentValues builtValues = builtProfile.getDbContentValues();
 		if (existingProfileId != SipProfile.INVALID_ID) {
@@ -144,6 +149,18 @@ public class Main extends Activity implements OnClickListener {
 		builtProfile.data = pwd;
 		builtProfile.proxies = new String[] { "sip:" + splitUser[1] };
 		return builtProfile;
+	}
+
+	private void showAlertMessage(String title, String error) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(error).setTitle(title).setCancelable(false)
+				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	@Override
