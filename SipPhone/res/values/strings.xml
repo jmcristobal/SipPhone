@@ -8,5 +8,6 @@
     <string name="sample_field_user">user@domain.com</string>
     <string name="sample_field_password">password</string>
     <string name="save_account">Save Account</string>
+    <string name="invalid_settings">Invalid Settings</string>
 
 </resources>
