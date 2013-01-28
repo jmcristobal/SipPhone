@@ -52,7 +52,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/sample_app_name" >
         <activity
-            android:name=".SampleCSipSimpleAppActivity"
+            android:name="com.sample.csipsimple.Main"
             android:label="@string/sample_app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
