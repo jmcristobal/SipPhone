@@ -38,11 +38,11 @@ public class Main extends Activity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		initilizeGui();
+		initializeGui();
 		configureSipStackPreferences();
 	}
 
-	private void initilizeGui() {
+	private void initializeGui() {
 		setContentView(R.layout.main);
 		// Bind view buttons
 		((Button) findViewById(R.id.start_btn)).setOnClickListener(this);
