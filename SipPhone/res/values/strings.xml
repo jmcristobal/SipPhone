@@ -2,12 +2,13 @@
 <resources>
 
     <string name="sample_app_name">SipPhone</string>
-    <string name="start_sip_service">Start SIP service</string>
-    <string name="manage_sip_service">Manage SIP service</string>
     <string name="configure_sip_account">Configure SIP account</string>
-    <string name="sample_field_user">user@domain.com</string>
-    <string name="sample_field_password">password</string>
-    <string name="save_account">Save Account</string>
-    <string name="invalid_settings">Invalid Settings</string>
+    <string name="hint_field_user">username</string>
+    <string name="hint_field_domain">domain.com</string>
+    <string name="hint_field_password">password</string>
+    <string name="hint_field_proxy">proxy hostname</string>
+    <string name="hint_field_sipaddress">username@hostname</string>
+    <string name="btn_call">Make Call</string>
+    <string name="btn_save_account">Save Account</string>
 
 </resources>

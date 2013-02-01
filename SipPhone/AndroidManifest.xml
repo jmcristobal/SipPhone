@@ -34,6 +34,37 @@
     <!-- Not taken into account? -->
     <uses-permission android:name="android.permission.RAISED_THREAD_PRIORITY" />
 
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.screen.portrait"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.flash"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
+
     <permission
         android:name="android.permission.USE_SIP"
         android:description="@string/permdesc_useSip"
@@ -48,6 +79,8 @@
         android:protectionLevel="dangerous" />
 
     <application
+        android:allowBackup="false"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/sample_app_name" >
         <activity
@@ -59,7 +92,112 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Call management -->
+        <receiver
+            android:name="com.csipsimple.service.OutgoingCall"
+            android:permission="android.permission.CALL_PHONE"
+            android:process=":sipStack" >
 
+            <!-- Here filter for protected-broadcasts -->
+            <intent-filter android:priority="0" >
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name="com.csipsimple.ui.outgoingcall.OutgoingCallChooser"
+            android:allowTaskReparenting="false"
+            android:configChanges="orientation"
+            android:excludeFromRecents="true"
+            android:label="@string/call"
+            android:launchMode="singleTask"
+            android:permission="android.permission.USE_SIP"
+            android:process=":sipStack"
+            android:taskAffinity=""
+            android:theme="@style/DarkTheme.Dialog" >
+            <intent-filter>
+                <action android:name="android.intent.action.CALL" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="csip" />
+                <data android:scheme="sip" />
+                <data android:scheme="sips" />
+            </intent-filter>
+            <intent-filter android:priority="10" >
+                <action android:name="android.phone.extra.NEW_CALL_INTENT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="csip" />
+                <data android:scheme="sip" />
+                <data android:scheme="sips" />
+            </intent-filter>
+        </activity>
+
+        <activity-alias
+            android:name="com.csipsimple.ui.PrivilegedOutgoingSipCallBroadcaster"
+            android:configChanges="orientation"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:permission="android.permission.CALL_PRIVILEGED"
+            android:targetActivity="com.csipsimple.ui.outgoingcall.OutgoingCallChooser"
+            android:theme="@style/DarkTheme.Dialog" >
+            <intent-filter>
+                <action android:name="android.intent.action.CALL_PRIVILEGED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="sip" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name="com.csipsimple.ui.PrivilegedOutgoingCallBroadcaster"
+            android:configChanges="orientation"
+            android:enabled="false"
+            android:excludeFromRecents="true"
+            android:label="@string/sip_call"
+            android:launchMode="singleTask"
+            android:permission="android.permission.CALL_PRIVILEGED"
+            android:targetActivity="com.csipsimple.ui.outgoingcall.OutgoingCallChooser"
+            android:theme="@style/DarkTheme.Dialog" >
+            <intent-filter>
+                <action android:name="android.intent.action.CALL_PRIVILEGED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="tel" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.CALL_PRIVILEGED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="vnd.android.cursor.item/phone" />
+                <data android:mimeType="vnd.android.cursor.item/phone_v2" />
+                <data android:mimeType="vnd.android.cursor.item/person" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SENDTO" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="smsto" />
+            </intent-filter>
+        </activity-alias>
+
+        <receiver
+            android:name="com.jmcristobal.sipphone.DeviceStateReceiver"
+            android:process=":sipStack" >
+
+            <!-- Here filter for protected-broadcasts -->
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="com.csipsimple.service.ACCOUNT_CHANGED" />
+                <action android:name="com.csipsimple.service.REGISTRATION_CHANGED" />
+            </intent-filter>
+        </receiver>
         <!-- To be able to do video, this has to be launched in sipStack process -->
         <activity
             android:name="com.csipsimple.ui.incall.InCallActivity"
@@ -76,7 +214,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.csipsimple.ui.incall.InCallMediaControl"
+            android:configChanges="orientation"
+            android:label="@string/prefs_media"
+            android:taskAffinity="com.csipsimple.ui.incall.InCallActivity"
+            android:theme="@style/DarkTheme.Dialog" />
 
+        <receiver android:name="com.csipsimple.service.HeadsetButtonReceiver" />
         <!-- Require at least the configure permission to use -->
         <service
             android:name="com.csipsimple.service.SipService"

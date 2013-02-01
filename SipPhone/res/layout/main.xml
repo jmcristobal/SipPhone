@@ -22,39 +22,48 @@
             android:id="@+id/field_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/sample_field_user"
-            android:inputType="textEmailAddress" >
+            android:hint="@string/hint_field_user"
+            android:inputType="textEmailAddress" />
 
-            <requestFocus />
-        </EditText>
+        <EditText
+            android:id="@+id/field_domain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_field_domain"
+            android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/field_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/sample_field_password"
+            android:hint="@string/hint_field_password"
             android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/field_proxy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_field_proxy"
+            android:inputType="text" />
 
         <Button
             android:id="@+id/save_acc_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/save_account" />
+            android:text="@string/btn_save_account" />
 
-        <!-- Sip service basic management -->
-
-        <TextView
+        <EditText
+            android:id="@+id/field_sipaddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dip"
-            android:text="@string/manage_sip_service"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:hint="@string/hint_field_sipaddress"
+            android:inputType="textEmailAddress" />
 
         <Button
-            android:id="@+id/start_btn"
+            android:id="@+id/call_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/start_sip_service" />
+            android:text="@string/btn_call" />
     </LinearLayout>
 
 </ScrollView>
