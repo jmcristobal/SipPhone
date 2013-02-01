@@ -31,7 +31,7 @@ public class Main extends Activity implements OnClickListener {
 	private static final String SORT_ORDER = SipProfile.FIELD_PRIORITY + " ASC";
 	private static final int ENABLE_ZRTP = 2;
 	private static final String SIP_STACK_LOG_LEVEL = "4";
-	private static final String STUN_SERVER = "stun.counterpath.com";
+	// private static final String STUN_SERVER = "stun.counterpath.com";
 	private static final String TAG = Main.class.toString();
 	private long existingProfileId = SipProfile.INVALID_ID;
 	private String SIP_ACC_ID_TEMPLATE = "<sip:%s@%s>";
@@ -62,8 +62,8 @@ public class Main extends Activity implements OnClickListener {
 		SipConfigManager.setPreferenceStringValue(this, SipConfigManager.LOG_LEVEL, SIP_STACK_LOG_LEVEL);
 		SipConfigManager.setPreferenceBooleanValue(this, SipConfigManager.LOG_USE_DIRECT_FILE, false);
 		SipConfigManager.setPreferenceBooleanValue(this, SipConfigManager.ICON_IN_STATUS_BAR, true);
-		SipConfigManager.setPreferenceBooleanValue(this, SipConfigManager.ENABLE_STUN, true);
-		SipConfigManager.setPreferenceStringValue(this, SipConfigManager.STUN_SERVER, STUN_SERVER);
+		// SipConfigManager.setPreferenceBooleanValue(this, SipConfigManager.ENABLE_STUN, true);
+		// SipConfigManager.setPreferenceStringValue(this, SipConfigManager.STUN_SERVER, STUN_SERVER);
 		SipConfigManager.setPreferenceBooleanValue(this, SipConfigManager.USE_ANYWAY_IN, true);
 		SipConfigManager.setPreferenceBooleanValue(this, SipConfigManager.USE_ANYWAY_OUT, true);
 		SipConfigManager.setPreferenceBooleanValue(this, SipConfigManager.USE_3G_IN, true);
