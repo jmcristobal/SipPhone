@@ -10,5 +10,6 @@
     <string name="hint_field_sipaddress">username@hostname</string>
     <string name="btn_call">Make Call</string>
     <string name="btn_save_account">Save Account</string>
+    <string name="menu_settings">Settings</string>
 
 </resources>
